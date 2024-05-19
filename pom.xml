@@ -39,8 +39,8 @@
 					<cloudHubDeployment>
 						<uri>https://anypoint.mulesoft.com</uri>
 						<muleVersion>${app.runtime}</muleVersion>
-						<username>${anypoint_cred.username}</username>
-						<password>${anypoint_cred.password}</password>
+						<username>${anypoint.username}</username>
+						<password>${anypoint.password}</password>
 						<applicationName>${app.name}</applicationName>
 						<environment>${env}</environment>
 						<workerType>MICRO</workerType>
@@ -112,6 +112,7 @@
 		</dependency>
 	</dependencies>
 
+
 	<repositories>
 		<repository>
 			<id>anypoint-exchange-v3</id>
@@ -138,5 +139,14 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
+<!-- 	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/NimishKhedkar1111/Mule-cicd-parent-configs</url>
+		</repository>
+	</distributionManagement> -->
+
 
 </project>
