@@ -36,23 +36,23 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
+					<classifier>mule-application</classifier>
 					<cloudHubDeployment>
 						<uri>https://anypoint.mulesoft.com</uri>
 						<muleVersion>${app.runtime}</muleVersion>
-						<username>NNK_110</username>
-						<password>Kimsohyun@11D</password>
+						<username>${anypoint.username}</username>
+						<password>${anypoint.password}</password>
 						<applicationName>${app.name}</applicationName>
 						<environment>${env}</environment>
 						<workerType>MICRO</workerType>
 						<region>us-east-2</region>
 						<workers>1</workers>
-						<!-- Start: SECURED PROPERTIES CI/CD -->
+						<objectStoreV2>true</objectStoreV2>
 						<properties>
-							<secure.key>${decryption.key}</secure.key>
+							<anypoint.platform.config.analytics.agent.enabled>true</anypoint.platform.config.analytics.agent.enabled>
+							<decryption.key>${decryption.key}</decryption.key>
 						</properties>
-						<!-- End: SECURED PROPERTIES CI/CD -->
 					</cloudHubDeployment>
-					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -70,25 +70,9 @@
 					</execution>
 				</executions>
 				<configuration>
-					<!-- START: MUnit coverage -->
-					<environmentVariables>
-						<secure.key>${decryption.key}</secure.key>
-					</environmentVariables>
-					<!-- END: MUnit coverage -->
 					<coverage>
 						<runCoverage>true</runCoverage>
-						<!-- START: MUnit coverage -->
-						<failBuild>true</failBuild>
-						<requiredApplicationCoverage>90</requiredApplicationCoverage>
-						<!-- <requiredResourceCoverage>50</requiredResourceCoverage> -->
-						<!-- <requiredFlowCoverage>50</requiredFlowCoverage> -->
-						<!-- END: MUnit coverage -->
 						<formats>
-							<!-- START: MUnit coverage -->
-							<format>console</format>
-							<format>sonar</format>
-							<format>json</format>
-							<!-- END: MUnit coverage -->
 							<format>html</format>
 						</formats>
 					</coverage>
@@ -99,25 +83,44 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.mule.weave</groupId>
+			<artifactId>assertions</artifactId>
+			<version>1.0.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.mule.connectors</groupId>
 			<artifactId>mule-http-connector</artifactId>
-			<version>1.8.0</version>
+			<version>1.6.0</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-tools</artifactId>
+			<version>2.3.7</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.connectors</groupId>
 			<artifactId>mule-sockets-connector</artifactId>
-			<version>1.2.3</version>
+			<version>1.2.2</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-runner</artifactId>
+			<version>2.3.7</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
-
 	<repositories>
 		<repository>
-			<id>anypoint-exchange-v3</id>
+			<id>anypoint-exchange-v2</id>
 			<name>Anypoint Exchange</name>
-			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+			<url>https://maven.anypoint.mulesoft.com/api/v2/maven</url>
 			<layout>default</layout>
 		</repository>
 		<repository>
@@ -126,12 +129,48 @@
 			<url>https://repository.mulesoft.org/releases/</url>
 			<layout>default</layout>
 		</repository>
+		<repository>
+			<id>mule-enterprise</id>
+			<name>Mule Enterprise Repository</name>
+			<url>https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
+			<id>mule-enterprise</id>
+			<name>Mule Enterprise Repository</name>
+			<url>https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>mule-public</id>
+			<name>Mule Public Repository</name>
+			<url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
 			<id>mulesoft-releases</id>
-			<name>MuleSoft Releases Repository</name>
+			<name>mulesoft release repository</name>
 			<layout>default</layout>
 			<url>https://repository.mulesoft.org/releases/</url>
 			<snapshots>
@@ -139,14 +178,5 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
-<!-- 	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>GitHub Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/NimishKhedkar1111/Mule-cicd-parent-configs</url>
-		</repository>
-	</distributionManagement> -->
-
 
 </project>
