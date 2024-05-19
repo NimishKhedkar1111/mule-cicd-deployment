@@ -7,7 +7,7 @@ on:
     branches: [ develop ]
     
 jobs:
-  build:
+  build-artifact:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout this repo
@@ -38,8 +38,8 @@ jobs:
           name: artifacts
           path: target/*.jar
         
-  deploy:
-    needs: build
+  deploy-develop:
+    needs: build-artifact
     runs-on: ubuntu-latest
     steps:    
     - name: Checkout this repo
