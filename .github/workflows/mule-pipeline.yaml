@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubantu-latest
+    runs-on: ubuntu-latest
       steps:
       - name: Checkout this repo
         uses: actions/checkout@v3  #clone repository to the runner.
@@ -51,7 +51,7 @@ jobs:
     needs: build
     if: ${{ github.event.pull_request.base.ref == 'develop' || (github.event_name == 'pull_request' || github.ref == 
     ref/heads/develop')}}
-    runs-on: ubantu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout this Repo  #needs: this job depends on the successful completion of the 'Build-Artifact'
         uses: actions/checkout@v3  #action to clone the repository into runner env.
@@ -85,7 +85,7 @@ jobs:
   Deploy to UAT-Environment:
     needs: build
     if:github.event_name == 'pull_request' && (github.event.pull_request.base.ref == 'uat')
-    runs-on: ubantu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout this Repo  #needs: this job depends on the successful completion of the 'Build-Artifact'
         uses: actions/checkout@v3  #action to clone the repository into runner env.
