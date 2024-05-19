@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<fixed-frequency />
 			</scheduling-strategy>
 		</scheduler>
-		<logger level="INFO" doc:name="Logger" doc:id="7f3c6829-42a7-4d03-93ca-099face8617c" message="API started"/>
+		<logger level="INFO" doc:name="Logger" doc:id="7f3c6829-42a7-4d03-93ca-099face8617c" message="API started.."/>
 		<ee:transform doc:name="Transform Message" doc:id="85ddacbe-77cc-4ae8-ad13-3879ec3de68e" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
