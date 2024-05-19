@@ -60,7 +60,7 @@ jobs:
         with:
           path: ~/.m2/repository   #The path of cache, which is the Local Maven Repo.
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}  #Unique key for the cache based on the operating system and hash of the pom.xml file
-          restore-keys:
+          restore-keys: |
             ${{ runner.os }}-maven-
       - uses: actions/download-artifact@v3  #Actions to download the artifact that was uploaded in the build job.
         with:
