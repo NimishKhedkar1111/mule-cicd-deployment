@@ -40,7 +40,7 @@
 						<uri>https://anypoint.mulesoft.com</uri>
 						<muleVersion>${app.runtime}</muleVersion>
 						<username>NNK_110</username>
-						<password>${anypoint.password}</password>
+						<password>Kimsohyun@11D</password>
 						<applicationName>${app.name}</applicationName>
 						<environment>${env}</environment>
 						<workerType>MICRO</workerType>
