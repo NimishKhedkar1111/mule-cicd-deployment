@@ -39,7 +39,7 @@
 					<cloudHubDeployment>
 						<uri>https://anypoint.mulesoft.com</uri>
 						<muleVersion>${app.runtime}</muleVersion>
-						<username>${anypoint.username}</username>
+						<username>NNK_110</username>
 						<password>${anypoint.password}</password>
 						<applicationName>${app.name}</applicationName>
 						<environment>${env}</environment>
