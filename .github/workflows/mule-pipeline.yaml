@@ -2,9 +2,9 @@ name: Build and Deploy to SandBox
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ develop, uat, prod ]
 
 jobs:
   Build-Artifact:
