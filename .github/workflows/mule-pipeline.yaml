@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-      
+
   pull_request:
     branches:
       - develop
@@ -12,7 +12,7 @@ on:
       - prod
 
 jobs:
-  Build:
+  build:
     runs-on: ubantu-latest
       steps:
       - name: Checkout this repo
@@ -48,7 +48,7 @@ jobs:
           path: target/*.jar   #The path to the JAR files to upload
 
   Deploy to Dev-Environment:
-    needs: Build
+    needs: build
     if: ${{ github.event.pull_request.base.ref == 'develop' || (github.event_name == 'pull_request' || github.ref == 
     ref/heads/develop')}}
     runs-on: ubantu-latest
@@ -83,7 +83,7 @@ jobs:
             -Danypoint.password="$PASSWORD"
 
   Deploy to UAT-Environment:
-    needs: Build
+    needs: build
     if:github.event_name == 'pull_request' && (github.event.pull_request.base.ref == 'uat')
     runs-on: ubantu-latest
     steps:
