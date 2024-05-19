@@ -2,9 +2,14 @@ name: Build and Deploy to SandBox
 
 on:
   push:
-    branches: [ develop ]
+    branches:
+      - develop
+      
   pull_request:
-    branches: [ develop, uat, prod ]
+    branches:
+      - develop
+      - uat
+      - prod
 
 jobs:
   Build:
