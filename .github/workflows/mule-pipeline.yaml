@@ -1,0 +1,112 @@
+name: Build and Deploy to SandBox
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  Build-Artifact:
+    runs-on: ubantu-latest
+      steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v3  #clone repository to the runner.
+      - name: Cache Dependencies
+        uses: actions/cache@v3     #action to cache Maven dependencies to speed up the build process.
+        with: 
+          path: ~/.m2/repository   #path to cache, here it's a local maven repository
+          key: ${{runner.os}}-maven-${{ hashFiles('**/pom.xml') }}   #Unique key for the cache, Generated from the OS and hash of the POM.xml file.
+          restore-keys: |          #Fallback key pattern to use if the specific key is not found.
+            ${{ runner.os }}-maven-
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v3  #Action to Setup Open JDF 8, which is required for building the MuleSoft Application.
+        with:
+          distribution: 'zulu'
+          java-version: 8
+      - name: Build with Maven
+        run: mav -B package --file pom.xml   #This cmd runs Maven to build project, #-B Runs maven in batch mode to reduce the log-output
+      - name: Stamp artifact file name with commit hash
+        run:  #artifactName1 = Find the first JAR file in the target Dir and stores its name artifactName1.
+              #commitHash = Gets the short version of the current Commit hash and stores it in "CommitHash".
+              #artifactName2 = Creates a new artifact name by appending the commit hash to the JAR file name.
+              #mv = renames the orignal artifact to the new name.
+             |
+          artifactName1=($1s target/*.jar | head -1) 
+          commitHash=$(git rev-parse --short "$GITHUB_SHA")
+          artifactName2=$(1s target/*.jar | head -1 | sed "s/.jar/-$commitHash.jar/g")
+          mv $artifactName1 $artifact@v3
+      - name: upload artifact
+        uses: actions/upload-artifact@v3  #This use to predefined Git-Hub Actions to upload build artifacts.
+        with:
+          name: artifacts
+          path: target/*.jar   #The path to the JAR files to upload
+
+  Deploy to Dev-Environment:
+    needs: Build-Artifact
+    if: ${{ github.event.pull_request.base.ref == 'develop' || (github.event_name == 'pull_request' || github.ref == 
+    ref/heads/develop')}}
+    runs-on: ubantu-latest
+    steps:
+      - name: Checkout this Repo  #needs: this job depends on the successful completion of the 'Build-Artifact'
+        uses: actions/checkout@v3  #action to clone the repository into runner env.
+      - name: Cache Dependencies
+        uses: actions/cache@v3     #Action to cache dependencies to speed up subsequent builds.
+        with:
+          path: ~/.m2/repository   #The path of cache, which is the Local Maven Repo.
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}  #Unique key for the cache based on the operating system and hash of the pom.xml file
+          restore-keys:
+            ${{ runner.os }}-maven-
+      - uses: actions/download-artifact@v3  #Actions to download the artifact that was uploaded in the build job.
+        with:
+          name: artifacts
+      - name: Deploy to SandBox
+        env:
+          USERNAME: ${{ secrets.anypoint_platform_username }}  #The Anypoint Platform username, stored securely in the Github secrets.
+          PASSWORD: ${{ secrets.anypoint_platform_password }}  #The Anypoint Platform password, stored securely in the Github secrets.
+        run:   #artifactName = Finds the First Jar in the current Directory and stores it name in artifactName.
+               #mvn deploy = Runs a Maven deploy cmd with following parameters
+                #-DmuleDeploy = Flag indicates this is MuleSoft Deployment
+                #Dmule.artifact = Specifies the artifact to Deploy.
+                #Danypoint.username = Use anypoint username from the env variable
+                #Danypoint.password = Use anypoint password from the env variable
+            |
+          artifactName=$(ls *.jar | head -1)
+          mvn deploy -DmuleDeploy
+            -Dmule.artifact=$artifactName \
+            -Danypoint.username="$USERNAME" \
+            -Danypoint.password="$PASSWORD"
+
+  Deploy to UAT-Environment:
+    needs: Build-Artifact
+    if:github.event_name == 'pull_request' && (github.event.pull_request.base.ref == 'uat')
+    runs-on: ubantu-latest
+    steps:
+      - name: Checkout this Repo  #needs: this job depends on the successful completion of the 'Build-Artifact'
+        uses: actions/checkout@v3  #action to clone the repository into runner env.
+      - name: Cache Dependencies
+        uses: actions/cache@v3     #Action to cache dependencies to speed up subsequent builds.
+        with:
+          path: ~/.m2/repository   #The path of cache, which is the Local Maven Repo.
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}  #Unique key for the cache based on the operating system and hash of the pom.xml file
+          restore-keys:
+            ${{ runner.os }}-maven-
+      - uses: actions/download-artifact@v3  #Actions to download the artifact that was uploaded in the build job.
+        with:
+          name: artifacts
+      - name: Deploy to SandBox
+        env:
+          USERNAME: ${{ secrets.anypoint_platform_username }}  #The Anypoint Platform username, stored securely in the Github secrets.
+          PASSWORD: ${{ secrets.anypoint_platform_password }}  #The Anypoint Platform password, stored securely in the Github secrets.
+        run:   #artifactName = Finds the First Jar in the current Directory and stores it name in artifactName.
+               #mvn deploy = Runs a Maven deploy cmd with following parameters
+                #-DmuleDeploy = Flag indicates this is MuleSoft Deployment
+                #Dmule.artifact = Specifies the artifact to Deploy.
+                #Danypoint.username = Use anypoint username from the env variable
+                #Danypoint.password = Use anypoint password from the env variable
+            |
+          artifactName=$(ls *.jar | head -1)
+          mvn deploy -DmuleDeploy
+            -Dmule.artifact=$artifactName \
+            -Danypoint.username="$USERNAME" \
+            -Danypoint.password="$PASSWORD"
